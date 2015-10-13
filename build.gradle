@@ -1,0 +1,20 @@
+apply plugin: 'java'
+apply plugin: 'scala'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.7
+version = '1.0'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "http://nifty-gui.sourceforge.net/nifty-maven-repo"
+    }
+}
+
+dependencies {
+    compile group: 'de.lessvoid', name: 'coregl-utils-jogl', version: '2.0-SNAPSHOT'
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+}
+
+
