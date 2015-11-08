@@ -109,6 +109,7 @@ class VolumeRender (xdim: Int, ydim: Int, zdim: Int, udim: Int, vdim: Int, volum
   }
 
   def render(gl: CoreGL, timeSinceLastRender: Float): Boolean = {
+    updateView(gl)
     gl.glClear(gl.GL_COLOR_BUFFER_BIT)
     gl.glDrawArrays(gl.GL_TRIANGLE_STRIP, 0, 4)
     gl.checkGLError("glDrawArrays")

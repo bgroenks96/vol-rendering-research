@@ -25,6 +25,10 @@ package org.osu.cse.groenke.vrlib
 import de.lessvoid.coregl.jogl.CoreSetupJogl
 import de.lessvoid.coregl.jogl.JoglCoreGL
 import de.lessvoid.math.Vec3
+import de.lessvoid.coregl.input.spi.CoreKeyEvent
+import de.lessvoid.coregl.input.spi.CoreKeyListener
+import de.lessvoid.coregl.spi.CoreGL
+import java.util.concurrent.Executors
 
 object Main {
 
@@ -55,12 +59,38 @@ object Main {
     val glsetup = new CoreSetupJogl(gl)
     glsetup.enableVSync(true)
     glsetup.initialize("Volume Rendering Test", udim, vdim)
-    glsetup.initializeLogging();
+    glsetup.initializeLogging
+    val input = glsetup.getInput
     val vr = new VolumeRender(xdim, ydim, zdim, udim, vdim, volume)
-    vr.viewOffs = new Vec3(0, 0, 100)
-    vr.viewRotation = new Vec3(0.5f,0.3f,0)
+    input.addListener(new InputListener(vr))
+    vr.viewOffs = new Vec3(0, 0, -10)
+    vr.viewRotation = new Vec3(0,0,0)
     glsetup.renderLoop(vr)
     glsetup.destroy
+  }
+  
+  private class InputListener(vr: VolumeRender) extends CoreKeyListener {
+    
+    val DELTA_OFFS = 0.2f
+    
+    def keyPressed(event: CoreKeyEvent) {
+      val code = event.getKeyCode
+      if (code == event.VK_UP()) {
+        vr.viewRotation = vr.viewRotation.translate(0, DELTA_OFFS, 0)
+      } else if (code == event.VK_DOWN()) {
+        vr.viewRotation = vr.viewRotation.translate(0, -DELTA_OFFS, 0)
+      } else if (code == event.VK_RIGHT()) {
+        if (event.isControlDown()) vr.viewRotation = vr.viewRotation.translate(0, 0, DELTA_OFFS)
+        else vr.viewRotation = vr.viewRotation.translate(DELTA_OFFS, 0, 0)
+      } else if (code == event.VK_LEFT()) {
+        if (event.isControlDown()) vr.viewRotation = vr.viewRotation.translate(0, 0, -DELTA_OFFS)
+        else vr.viewRotation = vr.viewRotation.translate(-DELTA_OFFS, 0, 0)
+      }
+    }
+    
+    def keyReleased(event: CoreKeyEvent) {
+      
+    }
   }
 
   private def usage() {
